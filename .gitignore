@@ -135,3 +135,8 @@ dmypy.json
 .idea/
 .vscode/
 results/
+results_smoke/
+
+data/
+pretrain/
+tools/
