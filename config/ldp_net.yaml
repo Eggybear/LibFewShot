@@ -16,7 +16,7 @@ classifier:
     beta: 0.5
     query_aug_times: 1
     use_lr_classifier: True
-    transductive: True
+    transductive: False
     transductive_iter: 7
     transductive_k: 10
     lr_max_iter: 1000

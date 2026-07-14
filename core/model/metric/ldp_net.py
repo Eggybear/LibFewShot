@@ -61,6 +61,7 @@ class LDPNet(MetricModel):
     def train(self, mode=True):
         super(LDPNet, self).train(mode)
         self.ema_emb_func.train(mode)
+        return self
 
     @torch.no_grad()
     def _momentum_update_ema(self):
@@ -80,7 +81,7 @@ class LDPNet(MetricModel):
     def _power_transform(self, feat):
         if self.beta is None:
             return feat
-        return torch.pow(feat, self.beta)
+        return torch.pow(feat.clamp_min(0.0), self.beta)
 
     def _proto_logits(self, support_feat, query_feat):
         episode_size, _, feat_dim = support_feat.size()
@@ -153,8 +154,15 @@ class LDPNet(MetricModel):
         aug_by_class = aug_prob.view(
             episode_size, aug_num, self.way_num, query_per_aug, way_num
         )
-        global_idx = torch.randint(query_per_aug, (episode_size,), device=self.device)
-        local_idx = torch.randint(query_per_aug, (episode_size,), device=self.device)
+        # Match the author's implementation: the two query indices are sampled
+        # from NumPy's RNG.  Using the CUDA RNG here changes the fixed-seed
+        # training trajectory even when every other paper setting is identical.
+        global_idx = [
+            np.random.permutation(query_per_aug)[0] for _ in range(episode_size)
+        ]
+        local_idx = [
+            np.random.permutation(query_per_aug)[0] for _ in range(episode_size)
+        ]
 
         global_prob = []
         local_prob = []
@@ -283,7 +291,10 @@ class LDPNet(MetricModel):
         y_proto = np.arange(self.way_num)
 
         for _ in range(self.transductive_iter):
-            prob_tensor = torch.from_numpy(prob).to(self.device).float()
+            # The reference Tr() applies softmax to sklearn's predict_proba
+            # output and keeps its float64 precision for confidence ranking.
+            prob_tensor = torch.from_numpy(prob).to(self.device)
+            prob_tensor = F.softmax(prob_tensor, dim=1)
             score, pred = prob_tensor.max(dim=1)
             refined_feat = []
             refined_target = []
