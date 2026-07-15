@@ -1,17 +1,6 @@
 # [LibFewShot](https://arxiv.org/abs/2109.04898)
 Make few-shot learning easy.
 
-This repository is a research extension of the original LibFewShot project.
-It preserves the upstream MIT license and attribution while adding the
-following integrations:
-
-- [LDP-Net](https://openaccess.thecvf.com/content/CVPR2023/html/Zhou_Revisiting_Prototypical_Network_for_Cross_Domain_Few-Shot_Learning_CVPR_2023_paper.html)
-- [LDC](./reproduce/LDC_CLIP/README.md), using the authors' external CLIP-LDC package
-
-Datasets, pretrained weights, checkpoints, and experiment outputs are local
-artifacts and are intentionally excluded from Git.
-
-
 [LibFewShot: A Comprehensive Library for Few-shot Learning](https://www.computer.org/csdl/journal/tp/5555/01/10239698/1Qck3o85t60).
 Wenbin Li, Ziyi Wang, Xuesong Yang, Chuanqi Dong, Pinzhuo Tian, Tiexin Qin, Jing Huo, Yinghuan Shi, Lei Wang, Yang Gao, Jiebo Luo. In TPAMI 2023.<br>
 <img src='flowchart.png' width=1000/>
@@ -84,8 +73,6 @@ python run_trainer_resume.py --result-path ./results/your-experiment
 
 Dataset paths and other common settings can still be overridden on the command
 line. For example: `--data_root ./data/miniImageNet--ravi --n_gpu 1`.
-LDC uses its dedicated [`run_ldc.py`](./run_ldc.py) entry point; see the
-[LDC reproduction guide](./reproduce/LDC_CLIP/README.md).
 
 ## Reproduction
 We provide some validated configs in [reproduce](./reproduce/), please refer to `./reproduce/<Method_Name>/README.md` for further infomations. The meanings of the symbols are as follows:
